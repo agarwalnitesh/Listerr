@@ -1,0 +1,1 @@
+export const ic_sideMenu = require("./SideMenu.jpg");
