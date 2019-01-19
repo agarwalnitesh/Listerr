@@ -1,6 +1,6 @@
 import React from 'react';
 import { createStackNavigator, createAppContainer } from "react-navigation";
-import Home from '../../Home';
+import LoginScreen from '../../Login_Screen/LoginScreen' ;
 import Friends from '../../Friends';
 import Chat from '../../Chat'
 import SideMenuNavigator from './AppSideMenu'
@@ -9,18 +9,15 @@ function createNavigator(isLoggedIn = false) {
   // Stack when user is authenticated
   const AuthStack = createStackNavigator(
     {
-      Home: { screen: Home },
+      LoginScreen: { screen: LoginScreen },
       Friends: { screen: Friends },
       AppScreens:  { screen: ({ navigation }) => <SideMenuNavigator screenProps={navigation} /> }
     },
     {
-      initialRouteName: "Home",
+      initialRouteName: "LoginScreen",
       headerMode:'none',
       defaultNavigationOptions: {
         headerTintColor: 'red',
-        headerStyle: {
-          backgroundColor: 'yellow'
-        }
       }
     }
   );

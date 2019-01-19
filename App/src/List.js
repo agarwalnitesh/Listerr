@@ -8,10 +8,6 @@ class Friends extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <StatusBar
-                    barStyle="light-content"
-                    backgroundColor="yellow"
-                />
                 <Text style={styles.welcome}>List here</Text>
                 <TouchableOpacity
                     onPress={() => this.props.navigation.toggleDrawer()}

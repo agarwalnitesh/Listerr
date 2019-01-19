@@ -7,10 +7,6 @@ class Chat extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <StatusBar
-                    barStyle="light-content"
-                    backgroundColor="green"
-                />
                 <Text style={styles.welcome}>Chat Here</Text>
                 <TouchableOpacity
                     onPress={() => this.props.navigation.toggleDrawer()}

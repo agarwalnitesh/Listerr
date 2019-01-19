@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, StatusBar, KeyboardAvoidingView, ScrollView, TextInput } from 'react-native';
-import scaling from './config/device/normalize';
+import {Alert, View, Text, StyleSheet, TouchableOpacity, StatusBar, KeyboardAvoidingView, ScrollView, TextInput } from 'react-native';
+import scaling from '../config/device/normalize';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import colors from '../../Assets/colors';
+import  ListerIcon from '../ListerIcon';
 
 const { widthScale, heightScale, normalize } = scaling
-class Home extends Component {
+class LoginScreen extends Component {
 
     renderIcon = (size) => {
         return (
@@ -24,12 +26,13 @@ class Home extends Component {
             <View style={styles.container}>
                 <StatusBar
                     barStyle='dark-content'
-                    backgroundColor="#ff3333"
+                    backgroundColor={colors.Red_Backgroud}
                 />
                 <ScrollView >
-                    <View style={{ flex: 0.3, backgroundColor: "#ff3333", alignItems: 'center' }}>
+                    <View style={{ flex: 0.3, backgroundColor: colors.Red_Backgroud, alignItems: 'center' }}>
                         <View style={{ elevation: 2, width: widthScale(100), height: heightScale(100), bottom: -50, backgroundColor: '#ccccb3', borderRadius: widthScale(15), paddingVertical: heightScale(10) }}>
-                            {this.renderIcon(80)}
+                            {/* {this.renderIcon(80)} */}
+                            <ListerIcon size={80}/>
                             <Text style={[styles.iconTextStyle, { fontSize: normalize(25) }]}>Listerr</Text>
                         </View>
                     </View>
@@ -49,10 +52,14 @@ class Home extends Component {
 
 
                         <View style={{ marginTop: heightScale(20), alignItems: 'center' }}>
-                            <TouchableOpacity style={{ backgroundColor: '#ff3333', borderRadius: widthScale(30), flexDirection: 'row', paddingHorizontal: widthScale(10) }}>
+                            <TouchableOpacity
+                            onPress={()=>this.props.navigation.navigate('AppScreens')
+                             }
+                            style={{ backgroundColor: '#ff3333', borderRadius: widthScale(30), flexDirection: 'row', paddingHorizontal: widthScale(10) }}>
                                 <Text style={{ textAlign: 'center', marginHorizontal: widthScale(10), fontSize: normalize(20), color: 'white', marginVertical: heightScale(10) }}>Open</Text>
                                 <View style={{ backgroundColor: 'white', marginVertical: heightScale(10), marginRight: widthScale(10), justifyContent: 'center',borderRadius:widthScale(5),paddingHorizontal:widthScale(5) }}>
-                                    {this.renderIcon(25)}
+                                    {/* {this.renderIcon(25)} */}
+                                    <ListerIcon size={25} />
                                 </View>
                             </TouchableOpacity>
                             <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: heightScale(20) }}>
@@ -66,7 +73,7 @@ class Home extends Component {
                                         type="AntDesign"
                                         name="facebook-square"
                                         size={50}
-                                        color="red"
+                                        color="blue"
                                         style={{ alignSelf: 'center', marginRight: widthScale(30) }}
                                     />
                                 </TouchableOpacity>
@@ -83,7 +90,8 @@ class Home extends Component {
                             <TouchableOpacity style={{ backgroundColor: '#ff3333', borderRadius: widthScale(30), flexDirection: 'row', paddingHorizontal: widthScale(10),marginVertical:heightScale(20) }}>
                                 <Text style={{ textAlign: 'center', marginHorizontal: widthScale(10), fontSize: normalize(20), color: 'white', marginVertical: heightScale(10) }}>Sign Up</Text>
                                 <View style={{ backgroundColor: 'white', marginVertical: heightScale(10), marginRight: widthScale(10), justifyContent: 'center',borderRadius:widthScale(5),paddingHorizontal:widthScale(5) }}>
-                                    {this.renderIcon(25)}
+                                    {/* {this.renderIcon(25)} */}
+                                    <ListerIcon size={25} />
                                 </View>
                             </TouchableOpacity>
                         </View>
@@ -101,7 +109,7 @@ class Home extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#ccccb3',
+        backgroundColor: colors.Theme_Color,
     },
     welcome: {
         fontSize: 20,
@@ -137,4 +145,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Home
+export default LoginScreen
