@@ -4,6 +4,7 @@ import scaling from '../config/device/normalize';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import colors from '../../Assets/colors';
 import  ListerIcon from '../ListerIcon';
+import fonts from '../../Assets/fonts';
 
 const { widthScale, heightScale, normalize } = scaling
 class LoginScreen extends Component {
@@ -142,6 +143,7 @@ const styles = StyleSheet.create({
         color: '#ff3333',
         fontWeight: 'bold',
         textAlign: 'center',
+        fontFamily:fonts.CharmRegular
     }
 });
 
