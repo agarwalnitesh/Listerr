@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "169144114411",
+    "firebase_url": "https://listerr-7a2a7.firebaseio.com",
+    "project_id": "listerr-7a2a7",
+    "storage_bucket": "listerr-7a2a7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:169144114411:android:bcde0f4812ca61b3",
+        "android_client_info": {
+          "package_name": "com.listerr"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "169144114411-eprmo5helo5sof6vo3cg9kb1nk7um75k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwldFKeAzjnCtTVXTDrPF8hZSeYoPlca8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

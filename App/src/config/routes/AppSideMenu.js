@@ -5,7 +5,8 @@ import SideMenu from '../../SideMenu';
 import scaling from '../device/normalize';
 import Friends from '../../Friends';
 import Chat from '../../Chat';
-import List from '../../List'
+import List from '../../List';
+
 const { width, height } = Dimensions.get('screen');
 import AppTabNavigator from './AppTabStack'
 

@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import colors from '../../Assets/colors';
 import  ListerIcon from '../ListerIcon';
 import fonts from '../../Assets/fonts';
+import firebase from 'react-native-firebase'
 
 const { widthScale, heightScale, normalize } = scaling
 class LoginScreen extends Component {
@@ -21,9 +22,9 @@ class LoginScreen extends Component {
         )
     }
     render() {
+        console.log("firebase: ",firebase);
+        
         return (
-
-
             <View style={styles.container}>
                 <StatusBar
                     barStyle='dark-content'
@@ -31,7 +32,7 @@ class LoginScreen extends Component {
                 />
                 <ScrollView >
                     <View style={{ flex: 0.3, backgroundColor: colors.Red_Backgroud, alignItems: 'center' }}>
-                        <View style={{ elevation: 2, width: widthScale(100), height: heightScale(100), bottom: -50, backgroundColor: '#ccccb3', borderRadius: widthScale(15), paddingVertical: heightScale(10) }}>
+                        <View style={{ elevation: 2, width: widthScale(100), bottom: -50, backgroundColor: '#ccccb3', borderRadius: widthScale(15), paddingVertical: heightScale(10) }}>
                             {/* {this.renderIcon(80)} */}
                             <ListerIcon size={80}/>
                             <Text style={[styles.iconTextStyle, { fontSize: normalize(25) }]}>Listerr</Text>
@@ -88,7 +89,9 @@ class LoginScreen extends Component {
                                     />
                                 </TouchableOpacity>
                             </View>
-                            <TouchableOpacity style={{ backgroundColor: '#ff3333', borderRadius: widthScale(30), flexDirection: 'row', paddingHorizontal: widthScale(10),marginVertical:heightScale(20) }}>
+                            <TouchableOpacity
+                            onPress={()=>this.props.navigation.navigate('PhoneAuth')} 
+                            style={{ backgroundColor: '#ff3333', borderRadius: widthScale(30), flexDirection: 'row', paddingHorizontal: widthScale(10),marginVertical:heightScale(20) }}>
                                 <Text style={{ textAlign: 'center', marginHorizontal: widthScale(10), fontSize: normalize(20), color: 'white', marginVertical: heightScale(10) }}>Sign Up</Text>
                                 <View style={{ backgroundColor: 'white', marginVertical: heightScale(10), marginRight: widthScale(10), justifyContent: 'center',borderRadius:widthScale(5),paddingHorizontal:widthScale(5) }}>
                                     {/* {this.renderIcon(25)} */}

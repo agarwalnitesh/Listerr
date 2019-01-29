@@ -2,7 +2,8 @@ import React from 'react';
 import { createStackNavigator, createAppContainer } from "react-navigation";
 import LoginScreen from '../../Login_Screen/LoginScreen' ;
 import Friends from '../../Friends';
-import Chat from '../../Chat'
+import Chat from '../../Chat';
+import PhoneAuth from '../../Phone_Auth/PhoneAuth'
 import SideMenuNavigator from './AppSideMenu'
 
 function createNavigator(isLoggedIn = false) {
@@ -11,7 +12,8 @@ function createNavigator(isLoggedIn = false) {
     {
       LoginScreen: { screen: LoginScreen },
       Friends: { screen: Friends },
-      AppScreens:  { screen: ({ navigation }) => <SideMenuNavigator screenProps={navigation} /> }
+      AppScreens:  { screen: ({ navigation }) => <SideMenuNavigator screenProps={navigation} /> },
+      PhoneAuth:{screen:PhoneAuth}
     },
     {
       initialRouteName: "LoginScreen",
