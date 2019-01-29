@@ -1,14 +1,19 @@
 import React, { Component } from 'react';
-import {Alert, View, Text, StyleSheet, TouchableOpacity, StatusBar, KeyboardAvoidingView, ScrollView, TextInput } from 'react-native';
+import { Alert, View, Text, StyleSheet, TouchableOpacity, StatusBar, KeyboardAvoidingView, ScrollView, TextInput } from 'react-native';
 import scaling from '../config/device/normalize';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import colors from '../../Assets/colors';
-import  ListerIcon from '../ListerIcon';
+import ListerIcon from '../ListerIcon';
 import fonts from '../../Assets/fonts';
-import firebase from 'react-native-firebase'
+import firebase from 'react-native-firebase';
+import { LoginButton, LoginManager, AccessToken, GraphRequest, GraphRequestManager } from 'react-native-fbsdk';
 
 const { widthScale, heightScale, normalize } = scaling
 class LoginScreen extends Component {
+
+    state = {
+        Username: ''
+    }
 
     renderIcon = (size) => {
         return (
@@ -21,9 +26,50 @@ class LoginScreen extends Component {
             />
         )
     }
+    //Create response callback.
+    _responseInfoCallback = (error, result) => {
+        if (error) {
+            console.log('Error fetching data: ', error.toString());
+        } else {
+            this.setState({ Username:result.name })
+            console.log('Result Name: ', result, " ", result.name, " ", result.picture);
+        }
+    }
+
+    renderFbLogin = () => {
+        let self = this
+        LoginManager.logInWithReadPermissions(["public_profile","email"]).then(
+            function (result) {
+                if (result.isCancelled) {
+                    console.log("Login cancelled");
+                } else {
+                    console.log(
+                        "Login success with permissions: ",
+                        result
+                    );
+                    AccessToken.getCurrentAccessToken().then(
+                        (data) => {
+                            const infoRequest = new GraphRequest(
+                                '/me?fields=name,picture,email',
+                                null,
+                                self._responseInfoCallback
+                            );
+                            // Start the graph request.
+                            new GraphRequestManager().addRequest(infoRequest).start();
+                            console.log("data", data)
+                            // this.props.navigation.navigate('AppScreens')
+                        }
+                    )
+                }
+            },
+            function (error) {
+                console.log("Login fail with error: " + error);
+            }
+        );
+    }
     render() {
-        console.log("firebase: ",firebase);
-        
+        console.log("firebase: ", LoginButton);
+
         return (
             <View style={styles.container}>
                 <StatusBar
@@ -34,7 +80,7 @@ class LoginScreen extends Component {
                     <View style={{ flex: 0.3, backgroundColor: colors.Red_Backgroud, alignItems: 'center' }}>
                         <View style={{ elevation: 2, width: widthScale(100), bottom: -50, backgroundColor: '#ccccb3', borderRadius: widthScale(15), paddingVertical: heightScale(10) }}>
                             {/* {this.renderIcon(80)} */}
-                            <ListerIcon size={80}/>
+                            <ListerIcon size={80} />
                             <Text style={[styles.iconTextStyle, { fontSize: normalize(25) }]}>Listerr</Text>
                         </View>
                     </View>
@@ -42,7 +88,9 @@ class LoginScreen extends Component {
                         <KeyboardAvoidingView behavior="padding" enabled>
                             <TextInput
                                 placeholder={'Username  / Phone. No.'}
-                                placeholderTextColor={'#ff6666'}                                
+                                placeholderTextColor={'#ff6666'}
+                                value={this.state.Username}
+                                onChangeText={Username => { this.setState({ Username }) }}
                                 style={styles.TextInputStyle} />
 
                             <TextInput
@@ -55,11 +103,11 @@ class LoginScreen extends Component {
 
                         <View style={{ marginTop: heightScale(20), alignItems: 'center' }}>
                             <TouchableOpacity
-                            onPress={()=>this.props.navigation.navigate('AppScreens')
-                             }
-                            style={{ backgroundColor: '#ff3333', borderRadius: widthScale(30), flexDirection: 'row', paddingHorizontal: widthScale(10) }}>
+                                onPress={() => this.props.navigation.navigate('AppScreens')
+                                }
+                                style={{ backgroundColor: '#ff3333', borderRadius: widthScale(30), flexDirection: 'row', paddingHorizontal: widthScale(10) }}>
                                 <Text style={{ textAlign: 'center', marginHorizontal: widthScale(10), fontSize: normalize(20), color: 'white', marginVertical: heightScale(10) }}>Open</Text>
-                                <View style={{ backgroundColor: 'white', marginVertical: heightScale(10), marginRight: widthScale(10), justifyContent: 'center',borderRadius:widthScale(5),paddingHorizontal:widthScale(5) }}>
+                                <View style={{ backgroundColor: 'white', marginVertical: heightScale(10), marginRight: widthScale(10), justifyContent: 'center', borderRadius: widthScale(5), paddingHorizontal: widthScale(5) }}>
                                     {/* {this.renderIcon(25)} */}
                                     <ListerIcon size={25} />
                                 </View>
@@ -70,7 +118,9 @@ class LoginScreen extends Component {
                                 <Text style={styles.messageText}>  using</Text>
                             </View>
                             <View style={{ marginTop: heightScale(20), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={this.renderFbLogin} //{()=>this.props.navigation.navigate('FBLogin')}
+                                >
                                     <Icon
                                         type="AntDesign"
                                         name="facebook-square"
@@ -79,7 +129,9 @@ class LoginScreen extends Component {
                                         style={{ alignSelf: 'center', marginRight: widthScale(30) }}
                                     />
                                 </TouchableOpacity>
-                                <TouchableOpacity>
+                                <TouchableOpacity
+                                onPress={()=>{this.setState({Username:''}),LoginManager.logOut()}} // currently this is user to logout the fb account
+                                >
                                     <Icon
                                         type="FontAwesome"
                                         name="google-plus-circle"
@@ -90,10 +142,10 @@ class LoginScreen extends Component {
                                 </TouchableOpacity>
                             </View>
                             <TouchableOpacity
-                            onPress={()=>this.props.navigation.navigate('PhoneAuth')} 
-                            style={{ backgroundColor: '#ff3333', borderRadius: widthScale(30), flexDirection: 'row', paddingHorizontal: widthScale(10),marginVertical:heightScale(20) }}>
+                                onPress={() => this.props.navigation.navigate('PhoneAuth')}
+                                style={{ backgroundColor: '#ff3333', borderRadius: widthScale(30), flexDirection: 'row', paddingHorizontal: widthScale(10), marginVertical: heightScale(20) }}>
                                 <Text style={{ textAlign: 'center', marginHorizontal: widthScale(10), fontSize: normalize(20), color: 'white', marginVertical: heightScale(10) }}>Sign Up</Text>
-                                <View style={{ backgroundColor: 'white', marginVertical: heightScale(10), marginRight: widthScale(10), justifyContent: 'center',borderRadius:widthScale(5),paddingHorizontal:widthScale(5) }}>
+                                <View style={{ backgroundColor: 'white', marginVertical: heightScale(10), marginRight: widthScale(10), justifyContent: 'center', borderRadius: widthScale(5), paddingHorizontal: widthScale(5) }}>
                                     {/* {this.renderIcon(25)} */}
                                     <ListerIcon size={25} />
                                 </View>
@@ -146,7 +198,7 @@ const styles = StyleSheet.create({
         color: '#ff3333',
         fontWeight: 'bold',
         textAlign: 'center',
-        fontFamily:fonts.CharmRegular
+        fontFamily: fonts.CharmRegular
     }
 });
 
