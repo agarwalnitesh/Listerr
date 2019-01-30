@@ -6,14 +6,63 @@ import colors from '../../Assets/colors';
 import ListerIcon from '../ListerIcon';
 import fonts from '../../Assets/fonts';
 import firebase from 'react-native-firebase';
+import { GoogleSignin, GoogleSigninButton, statusCodes } from 'react-native-google-signin';
 import { LoginButton, LoginManager, AccessToken, GraphRequest, GraphRequestManager } from 'react-native-fbsdk';
 
 const { widthScale, heightScale, normalize } = scaling
 class LoginScreen extends Component {
 
     state = {
-        Username: ''
+        Username: '',
+        userInfo: null,
+        error: null,
     }
+
+    async componentDidMount() {
+        this._configureGoogleSignIn();
+        // await this._getCurrentUser();
+    }
+
+    _configureGoogleSignIn() {
+        GoogleSignin.configure();
+    }
+
+    _signIn = async () => {
+        try {
+            await GoogleSignin.hasPlayServices();
+            const userInfo = await GoogleSignin.signIn();
+            
+            this.setState({ Username: userInfo.user.name, userInfo, error: null });
+        } catch (error) {
+            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+                // sign in was cancelled
+                Alert.alert('cancelled');
+            } else if (error.code === statusCodes.IN_PROGRESS) {
+                // operation in progress already
+                Alert.alert('in progress');
+            } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+                Alert.alert('play services not available or outdated');
+            } else {
+                Alert.alert('Something went wrong', error.toString());
+                this.setState({
+                    error,
+                });
+            }
+        }
+    };
+
+    _signOut = async () => {
+        try {
+          await GoogleSignin.revokeAccess();
+          await GoogleSignin.signOut();
+    
+          this.setState({ userInfo: null, error: null,Username:'' });
+        } catch (error) {
+          this.setState({
+            error,
+          });
+        }
+      };
 
     renderIcon = (size) => {
         return (
@@ -68,7 +117,6 @@ class LoginScreen extends Component {
         );
     }
     render() {
-        console.log("firebase: ", LoginButton);
 
         return (
             <View style={styles.container}>
@@ -114,7 +162,14 @@ class LoginScreen extends Component {
                             </TouchableOpacity>
                             <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: heightScale(20) }}>
                                 <Text style={styles.messageText}>Or open  </Text>
+                                <TouchableOpacity 
+                                onPress={()=>{
+                                    LoginManager.logOut();
+                                    this._signOut()
+                                }}
+                                >
                                 {this.renderIcon(25)}
+                                </TouchableOpacity>
                                 <Text style={styles.messageText}>  using</Text>
                             </View>
                             <View style={{ marginTop: heightScale(20), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -130,7 +185,7 @@ class LoginScreen extends Component {
                                     />
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                onPress={()=>{this.setState({Username:''}),LoginManager.logOut()}} // currently this is user to logout the fb account
+                                    onPress={this._signIn}   //{()=>{this.setState({Username:''}),LoginManager.logOut()}} // currently this is user to logout the fb account
                                 >
                                     <Icon
                                         type="FontAwesome"
