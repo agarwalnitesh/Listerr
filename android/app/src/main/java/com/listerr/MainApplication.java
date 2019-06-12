@@ -3,6 +3,7 @@ package com.listerr;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.facebook.reactnative.androidsdk.FBSDKPackage;
 import co.apptailor.googlesignin.RNGoogleSigninPackage;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
@@ -37,6 +38,7 @@ private static CallbackManager mCallbackManager = CallbackManager.Factory.create
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new FBSDKPackage(),
             new RNGoogleSigninPackage(),
             new FBSDKPackage(mCallbackManager),
             new RNFirebasePackage(),

@@ -6,16 +6,18 @@
  */
 
 #import "AppDelegate.h"
-
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
+#import <Firebase.h>
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <RNGoogleSignin/RNGoogleSignin.h>
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   NSURL *jsCodeLocation;
-
+[FIRApp configure];
   jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
 
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
@@ -30,6 +32,23 @@
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
   return YES;
+}
+
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+  
+  return [[FBSDKApplicationDelegate sharedInstance] application:application
+                                                        openURL:url
+                                              sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]
+                                                     annotation:options[UIApplicationOpenURLOptionsAnnotationKey]]
+  ||
+  [RNGoogleSignin application:application
+                      openURL:url
+            sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]
+                   annotation:options[UIApplicationOpenURLOptionsAnnotationKey]];
+  // Add any custom logic here.
+  
 }
 
 @end
