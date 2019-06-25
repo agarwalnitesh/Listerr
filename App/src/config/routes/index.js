@@ -7,21 +7,33 @@ import PhoneAuth from '../../Phone_Auth/PhoneAuth';
 import FBLogin from '../../FBLogin';
 import GoogleLogin from '../../GoogleLogin'
 import SideMenuNavigator from './AppSideMenu'
+import SignupScreen from '../../Signup_Screen/SignupScreen';
+import VerifyOtp from '../../Signup_Screen/VerifyOtpScreen'
 
 function createNavigator(isLoggedIn = false) {
   // Stack when user is authenticated
   const AuthStack = createStackNavigator(
     {
-      LoginScreen: { screen: LoginScreen },
+      LoginScreen: {
+        screen: LoginScreen, navigationOptions: {
+          header: null
+        }
+      },
       Friends: { screen: Friends },
-      AppScreens: { screen: ({ navigation }) => <SideMenuNavigator screenProps={navigation} /> },
+      AppScreens: {
+        screen: ({ navigation }) => <SideMenuNavigator screenProps={navigation} />, navigationOptions: {
+          header: null
+        }
+      },
       PhoneAuth: { screen: PhoneAuth },
       FBLogin: { screen: FBLogin },
-      GoogleLogin: { screen: GoogleLogin }
+      GoogleLogin: { screen: GoogleLogin },
+      SignupScreen: { screen: SignupScreen },
+      VerifyOtp: { screen: VerifyOtp }
     },
     {
       initialRouteName: "LoginScreen",
-      headerMode: 'none',
+      // headerMode: 'none',
       defaultNavigationOptions: {
         headerTintColor: 'red',
       }

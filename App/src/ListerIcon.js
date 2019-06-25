@@ -4,11 +4,11 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 export default ListerIcon = props => {
     return (
         <Icon
-            type="AntDesign"
-            name="gitlab"
+            type='AntDesign'//"material-icons"
+            name="gitlab" //"check-circle-o","circle-o"
             size={props.size}
-            color="red"
-            style={{ alignSelf: 'center' }}
+            color={props.color || "red"}
+            style={[props.style, { alignSelf: 'center' }]}
         />
     )
 }

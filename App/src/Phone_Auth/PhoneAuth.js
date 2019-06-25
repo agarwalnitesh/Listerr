@@ -16,7 +16,11 @@ export default class PhoneAuth extends Component {
       confirmResult: null,
     };
   }
-
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: 'Sign Up'
+    }
+  }
   componentDidMount() {
     this.unsubscribe = firebase.auth().onAuthStateChanged((user) => {
       if (user) {
@@ -35,7 +39,7 @@ export default class PhoneAuth extends Component {
   }
 
   componentWillUnmount() {
-     if (this.unsubscribe) this.unsubscribe();
+    if (this.unsubscribe) this.unsubscribe();
   }
 
   signIn = () => {
@@ -62,10 +66,10 @@ export default class PhoneAuth extends Component {
   signOut = () => {
     firebase.auth().signOut();
   }
-  
+
   renderPhoneNumberInput() {
-   const { phoneNumber } = this.state;
-      
+    const { phoneNumber } = this.state;
+
     return (
       <View style={{ padding: 25 }}>
         <Text>Enter phone number:</Text>
@@ -80,20 +84,20 @@ export default class PhoneAuth extends Component {
       </View>
     );
   }
-  
+
   renderMessage() {
     const { message } = this.state;
-  
+
     if (!message.length) return null;
-  
+
     return (
       <Text style={{ padding: 5, backgroundColor: '#000', color: '#fff' }}>{message}</Text>
     );
   }
-  
+
   renderVerificationCodeInput() {
     const { codeInput } = this.state;
-  
+
     return (
       <View style={{ marginTop: 25, padding: 25 }}>
         <Text>Enter verification code below:</Text>
@@ -113,13 +117,13 @@ export default class PhoneAuth extends Component {
     const { user, confirmResult } = this.state;
     return (
       <View style={{ flex: 1 }}>
-        
+
         {!user && !confirmResult && this.renderPhoneNumberInput()}
-        
+
         {this.renderMessage()}
-        
+
         {!user && confirmResult && this.renderVerificationCodeInput()}
-        
+
         {user && (
           <View
             style={{

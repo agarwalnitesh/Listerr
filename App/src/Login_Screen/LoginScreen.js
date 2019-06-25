@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Alert, View, Text, StyleSheet, TouchableOpacity, StatusBar, KeyboardAvoidingView, ScrollView, TextInput } from 'react-native';
+import { Alert, View, Text, StyleSheet, TouchableOpacity, StatusBar, KeyboardAvoidingView, ScrollView, TextInput, Platform } from 'react-native';
 import scaling from '../config/device/normalize';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import colors from '../../Assets/colors';
@@ -8,19 +8,40 @@ import fonts from '../../Assets/fonts';
 import firebase from 'react-native-firebase';
 import { GoogleSignin, GoogleSigninButton, statusCodes } from 'react-native-google-signin';
 import { LoginButton, LoginManager, AccessToken, GraphRequest, GraphRequestManager } from 'react-native-fbsdk';
+import { StackActions, NavigationActions } from 'react-navigation'
+import AppToast from '../widgets/Toast';
+import { sendCodeAction, saveLoginData } from '../Signup_Screen/ducks/SignupScreen.actions';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { Spinner } from '../widgets/Spinner'
 
-const { widthScale, heightScale, normalize } = scaling
+const { widthScale, heightScale, normalize, moderateScale } = scaling
 class LoginScreen extends Component {
 
     state = {
         Username: '',
+        Password: '',
         userInfo: null,
         error: null,
+    }
+    // static navigationOption = ({ navigation }) => {
+    //     return {
+    //         headerMode: 'none'
+    //     }
+    // }
+    constructor(props) {
+        super(props)
+
     }
 
     async componentDidMount() {
         this._configureGoogleSignIn();
-        // await this._getCurrentUser();
+        if (Platform.OS === 'ios') {
+            LoginManager.setLoginBehavior('web');
+        } else if (Platform.OS === 'android') {
+            LoginManager.setLoginBehavior('web_only');
+        }
+        // // await this._getCurrentUser();
     }
 
     _configureGoogleSignIn() {
@@ -31,7 +52,6 @@ class LoginScreen extends Component {
         try {
             await GoogleSignin.hasPlayServices();
             const userInfo = await GoogleSignin.signIn();
-            
             this.setState({ Username: userInfo.user.name, userInfo, error: null });
         } catch (error) {
             if (error.code === statusCodes.SIGN_IN_CANCELLED) {
@@ -53,16 +73,16 @@ class LoginScreen extends Component {
 
     _signOut = async () => {
         try {
-          await GoogleSignin.revokeAccess();
-          await GoogleSignin.signOut();
-    
-          this.setState({ userInfo: null, error: null,Username:'' });
+            await GoogleSignin.revokeAccess();
+            await GoogleSignin.signOut();
+
+            this.setState({ userInfo: null, error: null, Username: '' });
         } catch (error) {
-          this.setState({
-            error,
-          });
+            this.setState({
+                error,
+            });
         }
-      };
+    };
 
     renderIcon = (size) => {
         return (
@@ -80,14 +100,14 @@ class LoginScreen extends Component {
         if (error) {
             console.log('Error fetching data: ', error.toString());
         } else {
-            this.setState({ Username:result.name })
+            this.setState({ Username: result.name })
             console.log('Result Name: ', result, " ", result.name, " ", result.picture);
         }
     }
 
     renderFbLogin = () => {
         let self = this
-        LoginManager.logInWithReadPermissions(["public_profile","email"]).then(
+        LoginManager.logInWithReadPermissions(["public_profile", "email"]).then(
             function (result) {
                 if (result.isCancelled) {
                     console.log("Login cancelled");
@@ -116,19 +136,48 @@ class LoginScreen extends Component {
             }
         );
     }
-    render() {
 
+
+    onLoginPress = () => {
+        this.props.actions.sendCodeAction(true)
+        console.log("login data", this.state.Username, " password:", this.state.Password)
+        if (this.state.Username.length < 9 || this.state.Password.length < 4) {
+            this.props.actions.sendCodeAction(false)
+            AppToast.toastRef.show("Please Enter Valid Fields")
+        }
+        else {
+            firebase.database().ref('users').child(this.state.Username).on("value", (value) => {
+                let data = value._value
+                if (data.Password === this.state.Password) {
+                    this.props.actions.sendCodeAction(false)
+                    this.props.actions.saveLoginData(value._value)
+                    const resetAction = StackActions.reset({
+                        index: 0,
+                        actions: [NavigationActions.navigate({ routeName: 'AppScreens' })]
+                    });
+                    this.props.navigation.dispatch(resetAction);
+                }
+                else {
+                    this.props.actions.sendCodeAction(false)
+                    AppToast.toastRef.show("Invalid Password")
+                }
+            })
+        }
+
+    };
+    render() {
+        const { loading } = this.props.SignupReducer
         return (
             <View style={styles.container}>
                 <StatusBar
                     barStyle='dark-content'
                     backgroundColor={colors.Red_Backgroud}
                 />
-                <ScrollView >
+                <ScrollView bounces={false}>
                     <View style={{ flex: 0.3, backgroundColor: colors.Red_Backgroud, alignItems: 'center' }}>
-                        <View style={{ elevation: 2, width: widthScale(100), bottom: -50, backgroundColor: '#ccccb3', borderRadius: widthScale(15), paddingVertical: heightScale(10) }}>
+                        <View style={{ elevation: 2, width: widthScale(100), bottom: -50, backgroundColor: '#ccccb3', borderRadius: widthScale(15), paddingVertical: heightScale(10), shadowColor: 'black', shadowOpacity: 0.2 }}>
                             {/* {this.renderIcon(80)} */}
-                            <ListerIcon size={80} />
+                            <ListerIcon size={60} />
                             <Text style={[styles.iconTextStyle, { fontSize: normalize(25) }]}>Listerr</Text>
                         </View>
                     </View>
@@ -145,13 +194,15 @@ class LoginScreen extends Component {
                                 placeholder={'Password'}
                                 placeholderTextColor={'#ff6666'}
                                 secureTextEntry
+                                value={this.state.Password}
+                                onChangeText={Password => { this.setState({ Password }) }}
                                 style={styles.TextInputStyle} />
                         </KeyboardAvoidingView>
 
 
                         <View style={{ marginTop: heightScale(20), alignItems: 'center' }}>
                             <TouchableOpacity
-                                onPress={() => this.props.navigation.navigate('AppScreens')
+                                onPress={() => this.onLoginPress() //this.props.navigation.navigate('AppScreens')
                                 }
                                 style={{ backgroundColor: '#ff3333', borderRadius: widthScale(30), flexDirection: 'row', paddingHorizontal: widthScale(10) }}>
                                 <Text style={{ textAlign: 'center', marginHorizontal: widthScale(10), fontSize: normalize(20), color: 'white', marginVertical: heightScale(10) }}>Open</Text>
@@ -162,13 +213,13 @@ class LoginScreen extends Component {
                             </TouchableOpacity>
                             <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: heightScale(20) }}>
                                 <Text style={styles.messageText}>Or open  </Text>
-                                <TouchableOpacity 
-                                onPress={()=>{
-                                    LoginManager.logOut();
-                                    this._signOut()
-                                }}
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        LoginManager.logOut();
+                                        this._signOut()
+                                    }}
                                 >
-                                {this.renderIcon(25)}
+                                    {this.renderIcon(25)}
                                 </TouchableOpacity>
                                 <Text style={styles.messageText}>  using</Text>
                             </View>
@@ -197,7 +248,7 @@ class LoginScreen extends Component {
                                 </TouchableOpacity>
                             </View>
                             <TouchableOpacity
-                                onPress={() => this.props.navigation.navigate('PhoneAuth')}
+                                onPress={() => this.props.navigation.navigate('SignupScreen')}
                                 style={{ backgroundColor: '#ff3333', borderRadius: widthScale(30), flexDirection: 'row', paddingHorizontal: widthScale(10), marginVertical: heightScale(20) }}>
                                 <Text style={{ textAlign: 'center', marginHorizontal: widthScale(10), fontSize: normalize(20), color: 'white', marginVertical: heightScale(10) }}>Sign Up</Text>
                                 <View style={{ backgroundColor: 'white', marginVertical: heightScale(10), marginRight: widthScale(10), justifyContent: 'center', borderRadius: widthScale(5), paddingHorizontal: widthScale(5) }}>
@@ -206,11 +257,9 @@ class LoginScreen extends Component {
                                 </View>
                             </TouchableOpacity>
                         </View>
-
                     </View>
                 </ScrollView>
-
-
+                {loading && <Spinner />}
             </View>
 
         )
@@ -243,6 +292,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         borderRadius: widthScale(50),
         paddingHorizontal: widthScale(15),
+        paddingVertical: heightScale(10),
         marginTop: heightScale(20),
         fontWeight: 'bold',
         fontSize: normalize(15),
@@ -257,4 +307,16 @@ const styles = StyleSheet.create({
     }
 });
 
-export default LoginScreen
+function mapStateToProps({ SignupReducer }) {
+    return {
+        SignupReducer
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        actions: bindActionCreators({ sendCodeAction, saveLoginData }, dispatch)
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen)

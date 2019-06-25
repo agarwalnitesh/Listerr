@@ -2,17 +2,22 @@ import { createStackNavigator, createBottomTabNavigator, StackActions } from 're
 import React from 'react';
 import { Image, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Scaling from '../device/normalize';
-import Tab1 from '../../Tab1';
+import Dashboard from '../../Dashboard/Dashboard';
 import Tab2 from '../../Tab2'
 
 const { heightScale, widthScale, normalize } = Scaling;
 
 // Each tab has its own Stack navigator
 const AppTabNavigator = createBottomTabNavigator({
-    Tab1: {
+    Dashboard: {
         screen: createStackNavigator({
-            Tab1: { screen: Tab1 }
-        }, { headerMode: 'none' }),
+            Dashboard: {
+                screen: Dashboard,
+                navigationOptions: {
+                    header: null
+                }
+            }
+        }),
         navigationOptions: ({ navigation }) => ({
             tabBarButtonComponent: () => (
                 <TouchableOpacity
@@ -20,11 +25,11 @@ const AppTabNavigator = createBottomTabNavigator({
                     style={[styles.tabStyle, navigation.isFocused() && styles.activeBackground]}
                     onPress={() => {
                         navigation.dispatch(StackActions.popToTop());
-                        navigation.navigate('Tab1')
+                        navigation.navigate('Dashboard')
                     }}
                 >
                     <View style={{ alignItems: 'center' }}>
-                        <Text style={[styles.tabTextStyle, { fontSize: normalize(10), textAlign: 'center' }]}>{'Tab1'}</Text>
+                        <Text style={[styles.tabTextStyle, { fontSize: normalize(15), textAlign: 'center' }]}>{'Tab1'}</Text>
                     </View>
                 </TouchableOpacity>
             )
@@ -32,8 +37,12 @@ const AppTabNavigator = createBottomTabNavigator({
     },
     Tab2: {
         screen: createStackNavigator({
-            Tab2: { screen: Tab2 }
-        }, { headerMode: 'none' }),
+            Tab2: {
+                screen: Tab2, navigationOptions: {
+                    header: null
+                }
+            }
+        }),
         navigationOptions: ({ navigation }) => ({
             tabBarButtonComponent: () => (
                 <TouchableOpacity
@@ -45,7 +54,7 @@ const AppTabNavigator = createBottomTabNavigator({
                     }}
                 >
                     <View style={{ alignItems: 'center' }}>
-                        <Text style={[styles.tabTextStyle, { fontSize: normalize(10), textAlign: 'center' }]}>{'Tab2'}</Text>
+                        <Text style={[styles.tabTextStyle, { fontSize: normalize(15), textAlign: 'center' }]}>{'Tab2'}</Text>
                     </View>
                 </TouchableOpacity>
             )
@@ -60,14 +69,14 @@ const AppTabNavigator = createBottomTabNavigator({
             style: {
                 backgroundColor: 'red',
                 height: heightScale(60),
-                borderTopWidth: 1,
-                borderTopColor: 'blue',
-                borderTopLeftRadius:100,
-                borderTopRightRadius:100,
-                justifyContent:'center'
+                // borderTopWidth: 1,
+                // borderTopColor: 'blue',
+                borderTopLeftRadius: 100,
+                borderTopRightRadius: 100,
+                justifyContent: 'center'
             }
         },
-        initialRouteName: 'Tab1',
+        initialRouteName: 'Dashboard',
     });
 
 const styles = StyleSheet.create({

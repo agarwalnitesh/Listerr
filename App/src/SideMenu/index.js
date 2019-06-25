@@ -2,12 +2,29 @@ import React from 'react';
 import { View, ScrollView, Text, Image, TouchableOpacity, Alert, StyleSheet, Dimensions } from 'react-native';
 import scaling from '../config/device/normalize';
 import { ic_sideMenu } from '../../Assets/Images/SideMenu';
-import  ListerIcon from '../ListerIcon';
+import ListerIcon from '../ListerIcon';
+import { StackActions, NavigationActions } from 'react-navigation'
+import NavigationService from '../utils/NavigationService'
+
 
 const { widthScale, heightScale, normalize } = scaling
 const { width, height } = Dimensions.get('screen');
 
 class SideMenu extends React.Component {
+    logoutAndNavigate = () => {
+        console.log("Logout Pressed")
+
+        const navigationRef = NavigationService.navigationRef;
+        try {
+            const resetAction = StackActions.reset({
+                index: 0,
+                actions: [NavigationActions.navigate({ routeName: 'LoginScreen' })]
+            });
+            navigationRef.dispatch(resetAction);
+        } catch (err) {
+
+        }
+    };
     render() {
         return (
             <View style={{ flex: 1 }}>
@@ -15,23 +32,23 @@ class SideMenu extends React.Component {
                 <View>
                     <Image source={ic_sideMenu}
                         resizeMode={'stretch'}
-                        style={{ width: width - widthScale(125), height: heightScale(150) }}
+                        style={{ width: width - widthScale(125), height: heightScale(180) }}
                     />
                     {/* <View style={{ width: widthScale(50), height: heightScale(60), position: 'absolute', top: 120, left: 20, backgroundColor: 'grey',justifyContent:'center',borderRadius:widthScale(20) }}>
                     <Text style={{textAlign:'center',fontSize:normalize(28),fontWeight:'bold',fontStyle:'italic',color:'red'}}>Li!</Text>
                     </View> */}
-                    <View style={{ elevation: 2, width: widthScale(60), height: heightScale(80), position: 'absolute', top: 130, left: 20, backgroundColor: '#ccccb3', borderRadius: widthScale(15), paddingVertical: heightScale(10) }}>
-                            {/* {this.renderIcon(80)} */}
-                            <ListerIcon size={30}/>
-                            <Text style={[styles.iconTextStyle, { fontSize: normalize(18) }]}>Listerr</Text>
-                        </View>
-                    <Text style={{ fontSize: normalize(28), fontWeight: 'bold', color: 'red', position: 'absolute', top: 155, left: 110, }}>Hi Nitesh</Text>
+                    <View style={{ elevation: 2, height: heightScale(80), position: 'absolute', top: heightScale(140), left: 20, backgroundColor: '#ccccb3', borderRadius: widthScale(15), paddingVertical: heightScale(10), paddingHorizontal: widthScale(10) }}>
+                        {/* {this.renderIcon(80)} */}
+                        <ListerIcon size={25} />
+                        <Text style={[styles.iconTextStyle, { fontSize: normalize(15) }]}>Listerr</Text>
+                    </View>
+                    <Text style={{ fontSize: normalize(20), fontWeight: 'bold', color: 'red', position: 'absolute', top: heightScale(185), left: widthScale(100) }}>Hi Nitesh</Text>
                 </View>
                 <View
-                    style={{ marginHorizontal: widthScale(5), paddingBottom: heightScale(20),marginTop:heightScale(40) }}>
+                    style={{ marginHorizontal: widthScale(5), paddingBottom: heightScale(20), marginTop: heightScale(40) }}>
                     {/* <Text style={{ fontSize: normalize(18), fontWeight: 'bold', color: 'red', textAlign: 'center', paddingBottom: heightScale(20) }}>Hi Nitesh</Text> */}
                     <ScrollView
-                    contentContainerStyle={{marginBottom:heightScale(30)}}
+                        contentContainerStyle={{ marginBottom: heightScale(30), marginTop: heightScale(20) }}
                     >
                         <TouchableOpacity onPress={
                             () => this.props.navigation.navigate("List")
@@ -66,7 +83,7 @@ class SideMenu extends React.Component {
                         </TouchableOpacity>
 
                         <TouchableOpacity onPress={
-                            () => this.props.navigation.navigate("Tab1")
+                            () => this.logoutAndNavigate()
                         }>
                             <View style={styles.ViewStyle}>
                                 <Text style={[styles.itemTextStyle, { color: 'red', fontWeight: 'bold' }]}>Go Back!!</Text>

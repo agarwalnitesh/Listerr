@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity,StatusBar } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
 import normalize from './config/device/normalize'
 
 const { widthScale, heightScale } = normalize
@@ -8,10 +8,10 @@ class Friends extends Component {
         return (
             <View style={styles.container}>
                 <Text style={styles.welcome}>Add your Friends!</Text>
-                <TouchableOpacity 
-                onPress={() => this.props.navigation.navigate("AppScreens")}
-                style={{ paddingHorizontal: widthScale(10), paddingVertical: heightScale(10), backgroundColor: 'black' }}>
-                    <Text style={{ color: 'white' }}>{"Add"}</Text>
+                <TouchableOpacity
+                    onPress={() => this.props.navigation.navigate("AppScreens")}
+                    style={{ paddingHorizontal: widthScale(10), paddingVertical: heightScale(10), backgroundColor: 'black' }}>
+                    <Text style={{ color: 'white' }}>{"Friends screen"}</Text>
                 </TouchableOpacity>
             </View>
         )
